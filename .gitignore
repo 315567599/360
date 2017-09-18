@@ -1,0 +1,5 @@
+.gitignore
+.idea/inspectionProfiles/
+.idea/preferred-vcs.xml
+.idea/vcs.xml
+node_modules
