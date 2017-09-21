@@ -53,7 +53,7 @@ class Index extends React.Component {
                             key="sub1"
                             title={<span><Icon type="shop" /><span>商品管理</span></span>}
                         >
-                            <Menu.Item key="3"><PageLink url="./App.html" title="列表" handleClick={this.onPageClick} /></Menu.Item>
+                            <Menu.Item key="3"><PageLink url="./products.html" title="商品列表" handleClick={this.onPageClick} /></Menu.Item>
                             <Menu.Item key="4"><PageLink url="http://zisha360.com/" title="紫砂网" handleClick={this.onPageClick} /></Menu.Item>
                             <Menu.Item key="5">Alex</Menu.Item>
                         </SubMenu>
