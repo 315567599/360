@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import '../style/App.css';
-import { Form, Row, Col, Input, Button, Icon,Select, DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, Icon,Select, DatePicker, Slider,Table } from 'antd';
 const FormItem = Form.Item;
 import '../style/App.css';
+import reqwest from 'reqwest';
 
 class SearchBar extends React.Component {
    constructor(props) {
@@ -62,12 +63,12 @@ class SearchBar extends React.Component {
                   <Col span={8} key="volume">
                       <FormItem {...formItemLayout} label='容量'>
                           {getFieldDecorator('volume')(
-                              <Input placeholder="容量" />
+                              <Slider range min={0} max={1000} step={20} />
                           )}
                       </FormItem>
                   </Col>
 
-                  <Col span={9} key="date">
+                  <Col span={8} key="date">
                       <FormItem {...formItemLayout} label='上架时间'>
                           <Col span={11}>
                               <FormItem >
@@ -103,16 +104,84 @@ class SearchBar extends React.Component {
 }
 const WrappedSearchForm = Form.create()(SearchBar);
 
+const columns = [{
+    title: 'Name',
+    dataIndex: 'name',
+    sorter: true,
+    render: name => `${name.first} ${name.last}`,
+    width: '20%',
+}, {
+    title: 'Gender',
+    dataIndex: 'gender',
+    filters: [
+        { text: 'Male', value: 'male' },
+        { text: 'Female', value: 'female' },
+    ],
+    width: '20%',
+}, {
+    title: 'Email',
+    dataIndex: 'email',
+}];
+
 class SearchResult extends React.Component {
     constructor(props) {
        super(props);
     }
 
+    state = {
+        data: [],
+        pagination: {},
+        loading: false,
+    };
+    handleTableChange = (pagination, filters, sorter) => {
+        const pager = { ...this.state.pagination };
+        pager.current = pagination.current;
+        this.setState({
+            pagination: pager,
+        });
+        this.fetch({
+            results: pagination.pageSize,
+            page: pagination.current,
+            sortField: sorter.field,
+            sortOrder: sorter.order,
+            ...filters,
+        });
+    }
+    fetch = (params = {}) => {
+        console.log('params:', params);
+        this.setState({ loading: true });
+        reqwest({
+            url: 'https://randomuser.me/api',
+            method: 'get',
+            data: {
+                results: 10,
+                ...params,
+            },
+            type: 'json',
+        }).then((data) => {
+            const pagination = { ...this.state.pagination };
+            // Read total count from server
+            // pagination.total = data.totalCount;
+            pagination.total = 200;
+            this.setState({
+                loading: false,
+                data: data.results,
+                pagination,
+            });
+        });
+    }
+    componentDidMount() {
+        this.fetch();
+    }
     render() {
         return (
-            <div className="search-result-list">
-               Search Result List
-            </div>
+            <Table columns={columns}
+                   rowKey={record => record.registered}
+                   dataSource={this.state.data}
+                   pagination={this.state.pagination}
+                   loading={this.state.loading}
+                   onChange={this.handleTableChange}
+            />
         );
     }
 }

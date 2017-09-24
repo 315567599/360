@@ -26,6 +26,7 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-svg-loader": "^1.1.1",
+    "reqwest": "^2.0.5",
     "style-loader": "^0.18.2",
     "svg-loader": "0.0.2",
     "url-loader": "^0.5.9",
